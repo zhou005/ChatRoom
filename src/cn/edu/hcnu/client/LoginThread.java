@@ -86,8 +86,8 @@ public class LoginThread extends Thread {
             public void actionPerformed(ActionEvent e) {
                 String username = loginname.getText();
                 String password = loginPassword.getText();
-                PreparedStatement pstmt=null;
-                String sql="";
+                PreparedStatement pstmt = null;
+                String sql = "";
                 try {
                     String url = "jdbc:oracle:thin:@localhost:1521:ORCL";
                     String username_db = "opts";
@@ -107,27 +107,27 @@ public class LoginThread extends Thread {
                             显示聊天窗口
                              */
                             InetAddress addr = InetAddress.getLocalHost();
-                            System.out.println("本机IP地址: "+addr.getHostAddress());
-
-                            int port = 1688;
-                            while (true){
+                            System.out.println("本机IP地址: " + addr.getHostAddress());
+                            int port=1688;
+                            DatagramSocket ds=null;
+                            while(true) {
                                 try {
-                                    ServerSocket ss = new ServerSocket(port);
+                                    ds=new DatagramSocket(port);
                                     break;
-                                }catch (IOException ex) {
-                                    port+=1;
-                                    ex.printStackTrace();
+                                } catch (IOException ex) {
+                                    port += 1;
+                                    //ex.printStackTrace();
                                 }
-
                             }
-                            sql="UPDATE users SET ip=?,port=? WHERE username=?";
-                            pstmt=conn.prepareStatement(sql);
-                            pstmt.setString(1,addr.getHostAddress());
+                            sql = "UPDATE users SET ip=?,port=?,status=? WHERE username=?";
+                            pstmt = conn.prepareStatement(sql);
+                            pstmt.setString(1, addr.getHostAddress());
                             pstmt.setInt(2,port);
-                            pstmt.setString(3,username);
+                            pstmt.setString(3,"online");
+                            pstmt.setString(4, username);
                             pstmt.executeUpdate();
                             loginf.setVisible(false);
-                            ChatThreadWindow chatThreadWindow=new ChatThreadWindow();
+                            ChatThreadWindow chatThreadWindow = new ChatThreadWindow(username,ds);
                         } else {
                             System.out.println("登录失败");
                         }
@@ -153,5 +153,4 @@ public class LoginThread extends Thread {
         loginname.addActionListener(bl);
         loginPassword.addActionListener(bl);
     }
-
 }

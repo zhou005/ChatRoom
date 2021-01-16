@@ -33,8 +33,4 @@ public class MD5 {
         else
             return false;
     }
-
-    public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        System.out.println(encoderByMd5("ylx1234"));
-    }
 }
