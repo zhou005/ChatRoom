@@ -8,9 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import javax.swing.JButton;
@@ -110,10 +108,23 @@ public class LoginThread extends Thread {
                              */
                             InetAddress addr = InetAddress.getLocalHost();
                             System.out.println("本机IP地址: "+addr.getHostAddress());
-                            sql="UPDATE users SET ip=?,port=8888 WHERE username=?";
+
+                            int port = 1688;
+                            while (true){
+                                try {
+                                    ServerSocket ss = new ServerSocket(port);
+                                    break;
+                                }catch (IOException ex) {
+                                    port+=1;
+                                    ex.printStackTrace();
+                                }
+
+                            }
+                            sql="UPDATE users SET ip=?,port=? WHERE username=?";
                             pstmt=conn.prepareStatement(sql);
                             pstmt.setString(1,addr.getHostAddress());
-                            pstmt.setString(2,username);
+                            pstmt.setInt(2,port);
+                            pstmt.setString(3,username);
                             pstmt.executeUpdate();
                             loginf.setVisible(false);
                             ChatThreadWindow chatThreadWindow=new ChatThreadWindow();
@@ -142,4 +153,5 @@ public class LoginThread extends Thread {
         loginname.addActionListener(bl);
         loginPassword.addActionListener(bl);
     }
+
 }
